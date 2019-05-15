@@ -1,4 +1,4 @@
-package com.infoshareacademy.springdemo.controller;
+package com.infoshareacademy.springdemo.config;
 
 import com.infoshareacademy.springdemo.model.Note;
 import com.infoshareacademy.springdemo.repository.NoteRepository;
@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -45,5 +42,27 @@ public class NoteController {
         }
 
         return result.orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @PostMapping("/notes")
+    public Note addNote(@RequestBody Note note) {
+        LOG.info("Adding a new note: {}", note);
+        noteRepository.save(note);
+        LOG.info("Saved with id {}", note);
+        return note;
+    }
+    @DeleteMapping("/notes/{id}")
+    public void deleteNote(@PathVariable("id") Long id) {
+        LOG.info("Deleting note with id {}", id);
+
+        Optional<Note> note = noteRepository.findById(id);
+
+        if (note.isPresent()) {
+            LOG.info("Found a note with id {}", id);
+            noteRepository.delete(note.get());
+        } else {
+            LOG.warn("Note with id {} note found ;(", id);
+            throw new ResourceNotFoundException("No notes found with id " + id);
+        }
     }
 }

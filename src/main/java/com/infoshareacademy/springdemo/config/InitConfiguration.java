@@ -19,7 +19,9 @@ public class InitConfiguration {
                 new Note("Kup pomidory", LocalDateTime.now()));
 
         noteRepository.save(
-                new Note("Przygotuj się na rozmowę", LocalDateTime.now())
-        );
+                new Note("Przygotuj się na rozmowę", LocalDateTime.now()));
+
+        noteRepository.save(
+                new Note("To delete", LocalDateTime.now()));
     }
 }
