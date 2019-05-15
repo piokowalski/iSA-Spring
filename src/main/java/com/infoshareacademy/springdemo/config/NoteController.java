@@ -54,7 +54,6 @@ public class NoteController {
     @DeleteMapping("/notes/{id}")
     public void deleteNote(@PathVariable("id") Long id) {
         LOG.info("Deleting note with id {}", id);
-
         Optional<Note> note = noteRepository.findById(id);
 
         if (note.isPresent()) {
