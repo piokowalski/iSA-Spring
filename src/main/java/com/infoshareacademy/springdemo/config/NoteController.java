@@ -1,34 +1,49 @@
-package com.infoshareacademy.springdemo.config;
-
+package com.infoshareacademy.springdemo.controller;
 
 import com.infoshareacademy.springdemo.model.Note;
 import com.infoshareacademy.springdemo.repository.NoteRepository;
+import java.util.List;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
 public class NoteController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(NoteController.class);
+
+    private NoteRepository noteRepository;
+
     @Autowired
-    NoteRepository noteRepository;
+    public NoteController(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
+    }
+
     @GetMapping("/notes")
     public List<Note> getAllNotes() {
-        return noteRepository.findAllByOrderByDateDesc();
+        List<Note> result = noteRepository.findAllByOrderByDateDesc();
+        LOG.info("Found {} notes", result.size());
+
+        return result;
     }
 
     @GetMapping("/notes/{id}")
-    public Note getNoteById(@PathVariable(value = "id") Long noteId) {
-        return noteRepository.findById(noteId)
-                .orElseThrow(() -> new ResourceNotFoundException());
-    }
+    public Note getNote(@PathVariable("id") Long id) {
+        Optional<Note> result = noteRepository.findById(id);
 
-    @PostMapping("/notes")
-    public Note createNote(@RequestBody Note note) {
-        return noteRepository.save(note);
-    }
+        if (result.isPresent()) {
+            LOG.info("Note with id {} found!", id);
+        } else {
+            LOG.warn("Note with id {} not found :-C", id);
+        }
 
+        return result.orElseThrow(ResourceNotFoundException::new);
+    }
 }
