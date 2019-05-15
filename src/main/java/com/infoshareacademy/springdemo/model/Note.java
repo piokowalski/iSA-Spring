@@ -1,27 +1,38 @@
 package com.infoshareacademy.springdemo.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "NOTES")
-public class note {
+public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "content", length = 1024)
     @NotNull
     private String content;
 
-    @Column(name= "date")
+    @Column(name = "date")
     @NotNull
     private LocalDateTime date;
 
-    public note() {
+    public Note() {
+    }
+
+    public Note(@NotNull String content,
+                @NotNull LocalDateTime date) {
+        this.content = content;
+        this.date = date;
     }
 
     public Long getId() {
@@ -50,11 +61,11 @@ public class note {
 
     @Override
     public String toString() {
-        return "note{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", date=" + date +
-                '}';
+        final StringBuffer sb = new StringBuffer("Note{");
+        sb.append("id=").append(id);
+        sb.append(", content='").append(content).append('\'');
+        sb.append(", date=").append(date);
+        sb.append('}');
+        return sb.toString();
     }
 }
-
